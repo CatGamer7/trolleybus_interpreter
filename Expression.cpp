@@ -80,7 +80,7 @@ Value Variable_Expression::accept(ExpressionVisitor& exprVisitor) {
 	return exprVisitor.visit_Variable_Expression(*this);
 }
 
-Variable_Assignment_Expression::Variable_Assignment_Expression(Token& in_name, expr_ptr& in_expr) : name(in_name), expr(std::move(expr)) {}
+Variable_Assignment_Expression::Variable_Assignment_Expression(Token& in_name, expr_ptr& in_expr) : name(in_name), expr(std::move(in_expr)) {}
 
 Value Variable_Assignment_Expression::accept(ExpressionVisitor& exprVisitor) {
 	return exprVisitor.visit_Variable_Assignment_Expression(*this);
@@ -124,4 +124,44 @@ Value Expression_Type_Visitor::visit_Variable_Expression(Variable_Expression& ex
 
 Value Expression_Type_Visitor::visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) {
 	return Value((int)Expression_Type::Variable_Assignment);
+}
+
+Value Expression_Token_String_Visitor::visit_Binary(Binary_Expression& expr) {
+	return expr.binary_operator.string;
+}
+
+Value Expression_Token_String_Visitor::visit_Unary(Unary_Expression& expr) {
+	return expr.unary_operator.string;
+}
+
+Value Expression_Token_String_Visitor::visit_Grouping(Group_Expression& expr) {
+	return _null();
+}
+
+Value Expression_Token_String_Visitor::visit_Literal_Integer(Literal_Expression_Int& expr){
+	return _null();
+}
+
+Value Expression_Token_String_Visitor::visit_Literal_Float(Literal_Expression_Float& expr) {
+	return _null();
+}
+
+Value Expression_Token_String_Visitor::visit_Literal_Wstring(Literal_Expression_Wstring& expr) {
+	return _null();
+}
+
+Value Expression_Token_String_Visitor::visit_Literal_Bool(Literal_Expression_Bool& expr) {
+	return _null();
+}
+
+Value Expression_Token_String_Visitor::visit_Literal_Null(Literal_Expression_Null& expr) {
+	return _null();
+}
+
+Value Expression_Token_String_Visitor::visit_Variable_Expression(Variable_Expression& expr) {
+	return expr.name.string;
+}
+
+Value Expression_Token_String_Visitor::visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) {
+	return expr.name.string;
 }

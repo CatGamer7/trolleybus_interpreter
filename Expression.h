@@ -89,7 +89,6 @@ struct Variable_Expression : public Expression {
 
 struct Variable_Assignment_Expression : public Expression {
 	Variable_Assignment_Expression(Token& in_name, expr_ptr& in_expr);
-	Variable_Assignment_Expression() {};
 
 	Value accept(ExpressionVisitor& exprVisitor) override;
 
@@ -116,6 +115,19 @@ enum class Expression_Type {
 };
 
 class Expression_Type_Visitor : public ExpressionVisitor {
+	Value visit_Binary(Binary_Expression& expr) override;
+	Value visit_Unary(Unary_Expression& expr) override;
+	Value visit_Grouping(Group_Expression& expr) override;
+	Value visit_Literal_Integer(Literal_Expression_Int& expr) override;
+	Value visit_Literal_Float(Literal_Expression_Float& expr) override;
+	Value visit_Literal_Wstring(Literal_Expression_Wstring& expr) override;
+	Value visit_Literal_Bool(Literal_Expression_Bool& expr) override;
+	Value visit_Literal_Null(Literal_Expression_Null& expr) override;
+	Value visit_Variable_Expression(Variable_Expression& expr) override;
+	Value visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) override;
+};
+
+class Expression_Token_String_Visitor : public ExpressionVisitor {
 	Value visit_Binary(Binary_Expression& expr) override;
 	Value visit_Unary(Unary_Expression& expr) override;
 	Value visit_Grouping(Group_Expression& expr) override;

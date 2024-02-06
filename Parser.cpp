@@ -35,9 +35,12 @@ expr_ptr Parser::assignment() {
 
 			auto type_visitor = Expression_Type_Visitor();
 			if ((Expression_Type)std::get<int>(left->accept(type_visitor)) == Expression_Type::Variable) { //To hell with downcast, return Token with Visitor pattern
-				//std::unique_ptr<Variable_Expression> var_expr = std::unique_ptr<Variable_Expression>(dynamic_cast<Variable_Expression*>(left.get()));
 
-				return std::make_unique<Variable_Assignment_Expression>(Variable_Assignment_Expression());
+				auto string_visitor = Expression_Token_String_Visitor();
+				std::wstring token_string = std::get<std::wstring>(left->accept(string_visitor));
+				Token assignment_token = Token(token_type::IDENTIFIER, token_string, op.line);
+
+				return std::make_unique<Variable_Assignment_Expression>(Variable_Assignment_Expression(assignment_token, right));
 			}
 
 			else {

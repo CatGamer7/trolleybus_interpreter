@@ -2,6 +2,12 @@
 #include <iostream>
 #include "Interpreter.h"
 
+Interpreter::Interpreter() 
+	:
+	env(std::make_unique<Environment>())
+{
+}
+
 void Interpreter::interpret(std::vector<stmt_ptr>& stmts, AbstractReporter& reporter) {
 
 	for (auto & stmt : stmts) {
@@ -34,7 +40,22 @@ void Interpreter::visit_var_dec(Statement_Variable_Declaration& stmt) {
 		init_value = stmt.init_expr->accept(*this);
 	}
 
-	env.declare(stmt.name.string, init_value);
+	env->declare(stmt.name.string, init_value);
+}
+
+void Interpreter::visit_scope_block(Statement_Scope_Block& stmt) {
+	this->env = std::make_unique<Environment>(this->env);
+
+	try {
+		for (auto& s : stmt.stmts) {
+			s->accept(*this);
+		}
+	}
+	catch (Runtime_Exception e) {
+		this->env = std::move(this->env->get_outer());
+	}
+
+	this->env = std::move(this->env->get_outer());
 }
 
 Value Interpreter::visit_Binary(Binary_Expression& expr) {
@@ -210,12 +231,12 @@ Value Interpreter::visit_Literal_Null(Literal_Expression_Null& expr) {
 }
 
 Value Interpreter::visit_Variable_Expression(Variable_Expression& expr) {
-	return env.get(expr.name);
+	return env->get(expr.name);
 }
 
 Value Interpreter::visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) {
 	Value val = expr.expr->accept(*this);
-	env.assign(expr.name, val);
+	env->assign(expr.name, val);
 	return val;
 }
 

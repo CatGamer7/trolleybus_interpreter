@@ -207,16 +207,37 @@ stmt_ptr Parser::variable_declaration() {
 }
 
 stmt_ptr Parser::statement() {
-	stmt_ptr expr;
+	stmt_ptr stmt;
 
 	if (peek().type == token_type::PRINT) {
-		expr = statement_print();
+		stmt = statement_print();
+	}
+	else if (peek().type == token_type::LEFT_CURLY) {
+		stmt = block();
 	}
 	else {
-		expr = statement_expr();
+		stmt = statement_expr();
 	}
 
-	return expr;
+	return stmt;
+}
+
+stmt_ptr Parser::block() {
+	get(); //consume left curly
+
+	std::vector<stmt_ptr> block_stmts;
+	while ((!end()) && (peek().type != token_type::RIGHT_CURLY)) {
+		block_stmts.push_back(std::move(declaration()));
+	}
+
+	if (!end()) {
+		get(); //consume right curly
+	}
+	else {
+		throw Invalid_Syntax_Exception(L"closing token \"}\" expected", previous());
+	}
+
+	return std::make_unique<Statement_Scope_Block>(block_stmts);
 }
 
 stmt_ptr Parser::statement_expr() {

@@ -6,7 +6,7 @@
 
 class Interpreter : public ExpressionVisitor, public StatementVisitor {
 public:
-	Interpreter() {};
+	Interpreter();
 
 	void interpret(std::vector<stmt_ptr>& stmts, AbstractReporter& reporter);
 	bool check_errors();
@@ -14,6 +14,7 @@ private:
 	void visit_expression(Statement_Expression& stmt) override;
 	void visit_print(Statement_Print& stmt) override;
 	void visit_var_dec(Statement_Variable_Declaration& stmt) override;
+	void visit_scope_block(Statement_Scope_Block& stmt) override;
 
 	Value visit_Binary(Binary_Expression& expr) override;
 	Value visit_Unary(Unary_Expression& expr) override;
@@ -34,5 +35,5 @@ private:
 
 	bool had_errors = false;
 
-	Environment env = Environment();
+	std::unique_ptr<Environment> env = nullptr;
 };

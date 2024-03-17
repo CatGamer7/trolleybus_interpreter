@@ -35,8 +35,17 @@ struct Statement_Variable_Declaration : public Statement {
 	Token name;
 };
 
+struct Statement_Scope_Block : public Statement {
+	Statement_Scope_Block(std::vector<stmt_ptr>& in_stmts);
+
+	void accept(StatementVisitor& stmtVisitor);
+
+	std::vector<stmt_ptr> stmts;
+};
+
 struct StatementVisitor {
 	virtual void visit_expression(Statement_Expression& stmt) = 0;
 	virtual void visit_print(Statement_Print& stmt) = 0;
 	virtual void visit_var_dec(Statement_Variable_Declaration& stmt) = 0;
+	virtual void visit_scope_block(Statement_Scope_Block& stmt) = 0;
 };

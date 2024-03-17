@@ -1,4 +1,8 @@
 var a = 2;
 var b = 3;
 a = 10;
-print a + b;
+{
+	var c = "aaa";
+	var alas = a + b;
+	print alas;
+}

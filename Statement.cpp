@@ -45,3 +45,47 @@ Statement_Scope_Block::Statement_Scope_Block(std::vector<stmt_ptr>& in_stmts) {
 void Statement_Scope_Block::accept(StatementVisitor& stmtVisitor) {
 	stmtVisitor.visit_scope_block(*this);
 }
+
+Statement_If::Statement_If(expr_ptr& in_condition, stmt_ptr& in_stmt, stmt_ptr& in_else_stmt)
+	:
+	condition(std::move(in_condition)),
+	stmt(std::move(in_stmt)),
+	else_stmt(std::move(in_else_stmt))
+{
+}
+
+Statement_If::Statement_If(expr_ptr& in_condition, stmt_ptr& in_stmt)
+	:
+	condition(std::move(in_condition)),
+	stmt(std::move(in_stmt))
+{
+	else_stmt = nullptr;
+}
+
+void Statement_If::accept(StatementVisitor& stmtVisitor) {
+	stmtVisitor.visit_if(*this);
+}
+
+Statement_While::Statement_While(expr_ptr& in_condition, stmt_ptr& in_stmt)
+	:
+	condition(std::move(in_condition)),
+	stmt(std::move(in_stmt))
+{
+}
+
+void Statement_While::accept(StatementVisitor& stmtVisitor) {
+	stmtVisitor.visit_while(*this);
+}
+
+Statement_For::Statement_For(stmt_ptr& in_initializer, expr_ptr& in_condition, expr_ptr& in_increment, stmt_ptr& in_stmt)
+	:
+	initializer(std::move(in_initializer)),
+	condition(std::move(in_condition)),
+	increment(std::move(in_increment)),
+	stmt(std::move(in_stmt))
+{
+}
+
+void Statement_For::accept(StatementVisitor& stmtVisitor) {
+	stmtVisitor.visit_for(*this);
+}

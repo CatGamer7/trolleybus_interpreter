@@ -43,9 +43,43 @@ struct Statement_Scope_Block : public Statement {
 	std::vector<stmt_ptr> stmts;
 };
 
+struct Statement_If : public Statement {
+	Statement_If(expr_ptr& in_condition, stmt_ptr& in_stmt, stmt_ptr& in_else_stmt);
+	Statement_If(expr_ptr& in_condition, stmt_ptr& in_stmt);
+
+	void accept(StatementVisitor& stmtVisitor);
+
+	expr_ptr condition;
+	stmt_ptr stmt;
+	stmt_ptr else_stmt;
+};
+
+struct Statement_While : public Statement {
+	Statement_While(expr_ptr& in_condition, stmt_ptr& in_stmt);
+
+	void accept(StatementVisitor& stmtVisitor);
+
+	expr_ptr condition;
+	stmt_ptr stmt;
+};
+
+struct Statement_For : public Statement {
+	Statement_For(stmt_ptr& in_initializer, expr_ptr& in_condition, expr_ptr& in_increment, stmt_ptr& in_stmt);
+
+	void accept(StatementVisitor& stmtVisitor);
+
+	stmt_ptr initializer;
+	expr_ptr condition;
+	expr_ptr increment;
+	stmt_ptr stmt;
+};
+
 struct StatementVisitor {
 	virtual void visit_expression(Statement_Expression& stmt) = 0;
 	virtual void visit_print(Statement_Print& stmt) = 0;
 	virtual void visit_var_dec(Statement_Variable_Declaration& stmt) = 0;
 	virtual void visit_scope_block(Statement_Scope_Block& stmt) = 0;
+	virtual void visit_if(Statement_If& stmt) = 0;
+	virtual void visit_while(Statement_While& stmt) = 0;
+	virtual void visit_for(Statement_For& stmt) = 0;
 };

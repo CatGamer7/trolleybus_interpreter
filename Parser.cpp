@@ -235,14 +235,31 @@ stmt_ptr Parser::variable_declaration() {
 stmt_ptr Parser::statement() {
 	stmt_ptr stmt;
 
-	if (peek().type == token_type::PRINT) {
+	switch (peek().type)
+	{
+	case token_type::PRINT:
 		stmt = statement_print();
-	}
-	else if (peek().type == token_type::LEFT_CURLY) {
+		break;
+
+	case token_type::LEFT_CURLY:
 		stmt = block();
-	}
-	else {
+		break;
+
+	case token_type::FOR:
+		stmt = for_stmt();
+		break;
+
+	case token_type::WHILE:
+		stmt = while_stmt();
+		break;
+
+	case token_type::IF:
+		stmt = if_stmt();
+		break;
+
+	default:
 		stmt = statement_expr();
+		break;
 	}
 
 	return stmt;
@@ -264,6 +281,100 @@ stmt_ptr Parser::block() {
 	}
 
 	return std::make_unique<Statement_Scope_Block>(block_stmts);
+}
+
+stmt_ptr Parser::while_stmt() {
+	get(); //consume "while"
+
+	if (!end() && (peek().type == token_type::LEFT_PARENTHESIS)) {
+		get(); //consume "("
+
+		expr_ptr cond = expression();
+
+		if (!end() && (peek().type == token_type::RIGHT_PARENTHESIS)) {
+			get(); //consume ")"
+		}
+		else {
+			throw Invalid_Syntax_Exception(L"closing token \")\" expected", previous());
+		}
+
+		stmt_ptr body = statement();
+
+		return std::make_unique<Statement_While>(Statement_While(cond, body));
+	}
+	else {
+		throw Invalid_Syntax_Exception(L"opening token \"(\" expected before condition", previous());
+	}
+}
+
+stmt_ptr Parser::for_stmt() {
+	get(); //consume "for"
+
+
+	if (!end() && (peek().type == token_type::LEFT_PARENTHESIS)) {
+		get(); //consume "("
+
+		stmt_ptr init = declaration();
+
+		expr_ptr cond = expression(); //for "while" compatibility
+
+		if (!end() && (peek().type == token_type::SEMICOLON)) {
+			get(); //consume ";"
+		}
+		else {
+			throw Invalid_Syntax_Exception(L"separating token \";\" after condition expected", previous());
+		}
+
+		expr_ptr increment = expression();
+
+		if (!end() && (peek().type == token_type::RIGHT_PARENTHESIS)) {
+			get(); //consume ")"
+		}
+		else {
+			throw Invalid_Syntax_Exception(L"closing token \")\" expected", previous());
+		}
+
+		stmt_ptr body = statement();
+
+		return std::make_unique<Statement_For>(Statement_For(init, cond, increment, body));
+	}
+	else {
+		throw Invalid_Syntax_Exception(L"opening token \"(\" expected before condition", previous());
+	}
+
+}
+
+stmt_ptr Parser::if_stmt() {
+	get(); //consume "if"
+	
+	if (!end() && (peek().type == token_type::LEFT_PARENTHESIS)) {
+		get(); //consume "("
+
+		expr_ptr cond = expression();
+		stmt_ptr if_branch;
+
+		if (!end() && (peek().type == token_type::RIGHT_PARENTHESIS)) {
+			get(); //consume ")"
+
+			if_branch = statement();
+		}
+		else {
+			throw Invalid_Syntax_Exception(L"closing token \")\" expected", previous());
+		}
+
+		if (!end() && (peek().type == token_type::ELSE)) {
+			get(); //consume "else"
+
+			stmt_ptr else_branch = statement();
+
+			return std::make_unique<Statement_If>(Statement_If(cond, if_branch, else_branch));
+		}
+
+		return std::make_unique<Statement_If>(Statement_If(cond, if_branch));
+	}
+	else {
+		throw Invalid_Syntax_Exception(L"opening token \"(\" expected before condition", previous());
+	}
 }
 
 stmt_ptr Parser::statement_expr() {

@@ -16,6 +16,9 @@ private:
 	stmt_ptr variable_declaration();
 	stmt_ptr statement();
 	stmt_ptr block();
+	stmt_ptr while_stmt();
+	stmt_ptr for_stmt();
+	stmt_ptr if_stmt();
 	stmt_ptr statement_expr();
 	stmt_ptr statement_print();
 

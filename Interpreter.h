@@ -15,6 +15,9 @@ private:
 	void visit_print(Statement_Print& stmt) override;
 	void visit_var_dec(Statement_Variable_Declaration& stmt) override;
 	void visit_scope_block(Statement_Scope_Block& stmt) override;
+	void visit_if(Statement_If& stmt) override;
+	void visit_while(Statement_While& stmt) override;
+	void visit_for(Statement_For& stmt) override;
 
 	Value visit_Binary(Binary_Expression& expr) override;
 	Value visit_Unary(Unary_Expression& expr) override;

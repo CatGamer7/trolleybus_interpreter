@@ -58,6 +58,48 @@ void Interpreter::visit_scope_block(Statement_Scope_Block& stmt) {
 	this->env = std::move(this->env->get_outer());
 }
 
+void Interpreter::visit_if(Statement_If& stmt) {
+	Value cond_value = stmt.condition->accept(*this);
+
+	if (is_Truthy(cond_value)) {
+		stmt.stmt->accept(*this);
+	}
+	else {
+		stmt.else_stmt->accept(*this);
+	}
+}
+
+void Interpreter::visit_while(Statement_While& stmt) {
+	Value cond_value = stmt.condition->accept(*this);
+
+	while (is_Truthy(cond_value)) {
+		stmt.stmt->accept(*this);
+
+		cond_value = stmt.condition->accept(*this);
+	}
+
+}
+
+void Interpreter::visit_for(Statement_For& stmt) {
+	std::vector<stmt_ptr> outer_block_vector;
+	outer_block_vector.push_back(std::move(stmt.initializer));
+
+	std::vector<stmt_ptr> while_block_vector;
+
+	while_block_vector.push_back(std::move(stmt.stmt));
+	while_block_vector.push_back(std::make_unique<Statement_Expression>(Statement_Expression(stmt.increment)));
+
+	stmt_ptr while_block = std::make_unique<Statement_Scope_Block>(Statement_Scope_Block(while_block_vector));
+
+	stmt_ptr while_loop = std::make_unique<Statement_While>(Statement_While(stmt.condition, while_block));
+
+	outer_block_vector.push_back(std::move(while_loop));
+
+	stmt_ptr outer_block = std::make_unique<Statement_Scope_Block>(Statement_Scope_Block(outer_block_vector));
+
+	outer_block->accept(*this);
+}
+
 Value Interpreter::visit_Binary(Binary_Expression& expr) {
 	Value expr_val_left = expr.left->accept(*this);
 	Value expr_val_right = expr.right->accept(*this);

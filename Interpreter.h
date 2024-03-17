@@ -26,6 +26,7 @@ private:
 	Value visit_Literal_Null(Literal_Expression_Null& expr) override;
 	Value visit_Variable_Expression(Variable_Expression& expr) override;
 	Value visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) override;
+	Value visit_Logical_Binary(Binary_Logical_Expression& expr) override;
 
 	bool is_Truthy(Value& in_val);
 	bool is_Equal(Value& left, Value& right);

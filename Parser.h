@@ -21,6 +21,8 @@ private:
 
 	expr_ptr expression();
 	expr_ptr assignment();
+	expr_ptr or_expr();
+	expr_ptr and_expr();
 	expr_ptr equality();
 	expr_ptr comparison();
 	expr_ptr term();

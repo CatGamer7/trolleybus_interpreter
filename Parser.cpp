@@ -27,7 +27,7 @@ std::unique_ptr<Expression> Parser::expression() {
 }
 
 expr_ptr Parser::assignment() {
-	std::unique_ptr<Expression> left = equality();
+	std::unique_ptr<Expression> left = or_expr();
 	if (!end()) {
 		if (peek().type == token_type::ASSIGNMENT) {
 			Token op = get();
@@ -48,6 +48,32 @@ expr_ptr Parser::assignment() {
 			}
 		}
 	}
+	return left;
+}
+
+expr_ptr Parser::or_expr() {
+	expr_ptr left = and_expr();
+
+	while (peek().type == token_type::OR) {
+		Token op = get(); //consume "or"
+
+		expr_ptr right = and_expr();
+		left = std::make_unique<Binary_Logical_Expression>(Binary_Logical_Expression(op, left, right));
+	}
+
+	return left;
+}
+
+expr_ptr Parser::and_expr() {
+	expr_ptr left = equality();
+
+	while (peek().type == token_type::AND) {
+		Token op = get(); //consume "and"
+
+		expr_ptr right = equality();
+		left = std::make_unique<Binary_Logical_Expression>(Binary_Logical_Expression(op, left, right));
+	}
+
 	return left;
 }
 

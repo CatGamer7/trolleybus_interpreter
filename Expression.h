@@ -21,6 +21,16 @@ struct Binary_Expression : public Expression {
 	expr_ptr right;
 };
 
+struct Binary_Logical_Expression : public Expression {
+	Binary_Logical_Expression(Token in_type, expr_ptr& in_left, expr_ptr& in_right);
+
+	Value accept(ExpressionVisitor& exprVisitor) override;
+
+	Token binary_operator;
+	expr_ptr left;
+	expr_ptr right;
+};
+
 struct Unary_Expression : public Expression {
 	Unary_Expression(Token in_type, expr_ptr& in_expr);
 
@@ -108,10 +118,11 @@ public:
 	virtual Value visit_Literal_Null(Literal_Expression_Null& expr) = 0;
 	virtual Value visit_Variable_Expression(Variable_Expression& expr) = 0;
 	virtual Value visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) = 0;
+	virtual Value visit_Logical_Binary(Binary_Logical_Expression& expr) = 0;
 };
 
 enum class Expression_Type {
-	Binary, Unary, Grouping, Literal_Integer, Literal_Float, Literal_Wstring, Literal_Bool, Literal_Null, Variable, Variable_Assignment
+	Binary, Unary, Grouping, Literal_Integer, Literal_Float, Literal_Wstring, Literal_Bool, Literal_Null, Variable, Variable_Assignment, Logic_Binary
 };
 
 class Expression_Type_Visitor : public ExpressionVisitor {
@@ -125,6 +136,7 @@ class Expression_Type_Visitor : public ExpressionVisitor {
 	Value visit_Literal_Null(Literal_Expression_Null& expr) override;
 	Value visit_Variable_Expression(Variable_Expression& expr) override;
 	Value visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) override;
+	Value visit_Logical_Binary(Binary_Logical_Expression& expr) override;
 };
 
 class Expression_Token_String_Visitor : public ExpressionVisitor {
@@ -138,4 +150,5 @@ class Expression_Token_String_Visitor : public ExpressionVisitor {
 	Value visit_Literal_Null(Literal_Expression_Null& expr) override;
 	Value visit_Variable_Expression(Variable_Expression& expr) override;
 	Value visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) override;
+	Value visit_Logical_Binary(Binary_Logical_Expression& expr) override;
 };

@@ -240,6 +240,29 @@ Value Interpreter::visit_Variable_Assignment_Expression(Variable_Assignment_Expr
 	return val;
 }
 
+Value Interpreter::visit_Logical_Binary(Binary_Logical_Expression& expr) {
+	Value expr_val_left = expr.left->accept(*this);
+
+	if (expr.binary_operator.type == token_type::AND) {
+		if (!is_Truthy(expr_val_left)) {
+			return expr_val_left;
+		}
+		else {
+			Value expr_val_right = expr.right->accept(*this);
+			return expr_val_right;
+		}
+	}
+	else {
+		if (is_Truthy(expr_val_left)) {
+			return expr_val_left;
+		}
+		else {
+			Value expr_val_right = expr.right->accept(*this);
+			return expr_val_right;
+		}
+	}
+}
+
 bool Interpreter::is_Truthy(Value& in_val) {
 	switch ((value_index)in_val.index()) {
 

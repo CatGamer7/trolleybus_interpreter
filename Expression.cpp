@@ -126,6 +126,10 @@ Value Expression_Type_Visitor::visit_Variable_Assignment_Expression(Variable_Ass
 	return Value((int)Expression_Type::Variable_Assignment);
 }
 
+Value Expression_Type_Visitor::visit_Logical_Binary(Binary_Logical_Expression& expr) {
+	return Value((int)Expression_Type::Logic_Binary);
+}
+
 Value Expression_Token_String_Visitor::visit_Binary(Binary_Expression& expr) {
 	return expr.binary_operator.string;
 }
@@ -164,4 +168,20 @@ Value Expression_Token_String_Visitor::visit_Variable_Expression(Variable_Expres
 
 Value Expression_Token_String_Visitor::visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) {
 	return expr.name.string;
+}
+
+Value Expression_Token_String_Visitor::visit_Logical_Binary(Binary_Logical_Expression& expr) {
+	return expr.binary_operator.string;
+}
+
+Binary_Logical_Expression::Binary_Logical_Expression(Token in_type, expr_ptr& in_left, expr_ptr& in_right)
+	:
+	left(std::move(in_left)),
+	right(std::move(in_right))
+{
+	binary_operator = in_type;
+}
+
+Value Binary_Logical_Expression::accept(ExpressionVisitor& exprVisitor) {
+	return exprVisitor.visit_Logical_Binary(*this);
 }

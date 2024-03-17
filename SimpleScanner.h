@@ -18,6 +18,8 @@ private:
 		{L"false", token_type::FALSE_LITERAL},
 		{L"null", token_type::NULL_LITERAL},
 		{L"print", token_type::PRINT},
-		{L"var", token_type::VAR}
+		{L"var", token_type::VAR},
+		{L"and", token_type::AND},
+		{L"or", token_type::OR}
 	};
 };

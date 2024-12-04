@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "Statement.h"
 #include "AbstractReporter.h"
 #include "RuntimeError.h"

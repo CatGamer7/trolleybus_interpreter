@@ -52,10 +52,10 @@ void Interpreter::visit_scope_block(Statement_Scope_Block& stmt) {
 		}
 	}
 	catch (Runtime_Exception e) {
-		this->env = std::move(this->env->get_outer());
+		this->env = this->env->get_outer();
 	}
 
-	this->env = std::move(this->env->get_outer());
+	this->env = this->env->get_outer();
 }
 
 void Interpreter::visit_if(Statement_If& stmt) {
@@ -98,6 +98,10 @@ void Interpreter::visit_for(Statement_For& stmt) {
 	stmt_ptr outer_block = std::make_unique<Statement_Scope_Block>(Statement_Scope_Block(outer_block_vector));
 
 	outer_block->accept(*this);
+}
+
+void Interpreter::visit_function(Statement_Function &stmt) {
+	
 }
 
 Value Interpreter::visit_Binary(Binary_Expression& expr) {
@@ -303,6 +307,12 @@ Value Interpreter::visit_Logical_Binary(Binary_Logical_Expression& expr) {
 			return expr_val_right;
 		}
 	}
+}
+
+Value Interpreter::visit_Call_Expression(Call_Expression &expr) {
+	// Make Value work with callables
+
+    return Value();
 }
 
 bool Interpreter::is_Truthy(Value& in_val) {

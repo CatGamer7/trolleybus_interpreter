@@ -89,3 +89,15 @@ Statement_For::Statement_For(stmt_ptr& in_initializer, expr_ptr& in_condition, e
 void Statement_For::accept(StatementVisitor& stmtVisitor) {
 	stmtVisitor.visit_for(*this);
 }
+
+Statement_Function::Statement_Function(Token &in_name, std::vector<Token> &in_arguments, stmt_ptr &in_body)
+	:
+	body(std::move(in_body))
+{
+	name = in_name;
+	arguments = in_arguments;
+}
+
+void Statement_Function::accept(StatementVisitor &stmtVisitor) {
+	stmtVisitor.visit_function(*this);
+}

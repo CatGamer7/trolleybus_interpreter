@@ -31,6 +31,7 @@ private:
 	expr_ptr term();
 	expr_ptr factor();
 	expr_ptr unary();
+	expr_ptr call();
 	expr_ptr primary();
 
 	void synchronize();

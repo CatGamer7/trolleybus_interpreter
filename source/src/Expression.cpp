@@ -1,3 +1,4 @@
+#include <vector>
 #include "Expression.h"
 
 Binary_Expression::Binary_Expression(Token in_type, expr_ptr& in_left, expr_ptr& in_right) 
@@ -130,6 +131,10 @@ Value Expression_Type_Visitor::visit_Logical_Binary(Binary_Logical_Expression& e
 	return Value((int)Expression_Type::Logic_Binary);
 }
 
+Value Expression_Type_Visitor::visit_Call_Expression(Call_Expression &expr) {
+    return Value((int)Expression_Type::Call);
+}
+
 Value Expression_Token_String_Visitor::visit_Binary(Binary_Expression& expr) {
 	return expr.binary_operator.string;
 }
@@ -174,6 +179,10 @@ Value Expression_Token_String_Visitor::visit_Logical_Binary(Binary_Logical_Expre
 	return expr.binary_operator.string;
 }
 
+Value Expression_Token_String_Visitor::visit_Call_Expression(Call_Expression &expr) {
+	return _null();
+}
+
 Binary_Logical_Expression::Binary_Logical_Expression(Token in_type, expr_ptr& in_left, expr_ptr& in_right)
 	:
 	left(std::move(in_left)),
@@ -184,4 +193,16 @@ Binary_Logical_Expression::Binary_Logical_Expression(Token in_type, expr_ptr& in
 
 Value Binary_Logical_Expression::accept(ExpressionVisitor& exprVisitor) {
 	return exprVisitor.visit_Logical_Binary(*this);
+}
+
+Call_Expression::Call_Expression(Token &in_parenthesis, expr_ptr &in_expr, std::vector<expr_ptr> &in_arguments)
+	:
+	expr(std::move(in_expr))
+{
+	parenthesis = in_parenthesis;
+	arguments = in_arguments;
+}
+
+Value Call_Expression::accept(ExpressionVisitor &exprVisitor) {
+    return exprVisitor.visit_Call_Expression(*this);
 }

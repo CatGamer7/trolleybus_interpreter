@@ -134,7 +134,41 @@ std::unique_ptr<Expression> Parser::unary() {
 		}
 	}
 
-	return primary();
+	return call();
+}
+
+expr_ptr Parser::call() {
+	expr_ptr callee = primary();
+
+	while (peek().type == token_type::LEFT_PARENTHESIS) {
+		Token parenthesis = get(); // Consumes "("
+		std::vector<expr_ptr> arguments = {};
+
+		if (peek().type == token_type::RIGHT_PARENTHESIS) { // Handle no argument case
+			callee = std::make_unique<Call_Expression>(Call_Expression(parenthesis, callee, arguments));
+			continue;
+		}
+
+		expr_ptr arg = expression();
+		arguments.push_back(arg);
+		while (peek().type != token_type::RIGHT_PARENTHESIS) {
+
+			if (get().type != token_type::COMMA) {
+				throw SyntaxError(L", expexted", parenthesis);
+			}
+
+			expr_ptr arg = expression();
+			arguments.push_back(arg);
+
+			if (arguments.size() > 255) {
+				throw SyntaxError(L"more than 255 arguments found", previous());
+			}
+		}
+		get(); // Consumes ")"
+		callee = std::make_unique<Call_Expression>(Call_Expression(parenthesis, callee, arguments));
+	}
+
+    return callee;
 }
 
 std::unique_ptr<Expression> Parser::primary() {

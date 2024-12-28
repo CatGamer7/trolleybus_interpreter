@@ -99,6 +99,10 @@ std::vector<Token> SimpleScanner::scan(AbstractReporter& reporter, std::wistream
 			t.type = token_type::SEMICOLON;
 			break;
 		
+		case ',':
+			t.type = token_type::COMMA;
+			break;
+
 		case '"':
 			t.type = token_type::STRING_LITERAL;
 			while (!stream.eof()) {

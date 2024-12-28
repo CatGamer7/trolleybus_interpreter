@@ -7,7 +7,7 @@
 class Environment {
 public:
 	Environment() : name_map() { outer = nullptr; };
-	Environment(std::unique_ptr<Environment>& in_outer) : name_map(), outer(std::move(in_outer)){};
+	Environment(std::shared_ptr<Environment>& in_outer) : name_map(), outer(std::move(in_outer)){};
 
 	void declare(const std::wstring& in_name, const Value& in_value) {
 		name_map.insert({ in_name, in_value });
@@ -45,10 +45,11 @@ public:
 		}
 	};
 
-	std::unique_ptr<Environment> get_outer() {
-		return std::move(outer);
+	std::shared_ptr<Environment> get_outer() {
+		return outer;
 	}
+
 private:
 	std::unordered_map<std::wstring, Value> name_map;
-	std::unique_ptr<Environment> outer = nullptr;
+	std::shared_ptr<Environment> outer = nullptr;
 };

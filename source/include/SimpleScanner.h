@@ -20,6 +20,7 @@ private:
 		{L"print", token_type::PRINT},
 		{L"var", token_type::VAR},
 		{L"and", token_type::AND},
-		{L"or", token_type::OR}
+		{L"or", token_type::OR},
+		{L"return", token_type::RETURN}
 	};
 };

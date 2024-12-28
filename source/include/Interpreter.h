@@ -4,6 +4,7 @@
 #include "AbstractReporter.h"
 #include "RuntimeError.h"
 #include "Environment.h"
+#include "CallableInterface.h"
 
 class Interpreter : public ExpressionVisitor, public StatementVisitor {
 public:
@@ -19,6 +20,7 @@ private:
 	void visit_if(Statement_If& stmt) override;
 	void visit_while(Statement_While& stmt) override;
 	void visit_for(Statement_For& stmt) override;
+	void visit_function(Statement_Function& stmt) override;
 
 	Value visit_Binary(Binary_Expression& expr) override;
 	Value visit_Unary(Unary_Expression& expr) override;
@@ -31,6 +33,7 @@ private:
 	Value visit_Variable_Expression(Variable_Expression& expr) override;
 	Value visit_Variable_Assignment_Expression(Variable_Assignment_Expression& expr) override;
 	Value visit_Logical_Binary(Binary_Logical_Expression& expr) override;
+	Value visit_Call_Expression(Call_Expression& expr) override;
 
 	bool is_Truthy(Value& in_val);
 	bool is_Equal(Value& left, Value& right);
@@ -40,5 +43,5 @@ private:
 
 	bool had_errors = false;
 
-	std::unique_ptr<Environment> env = nullptr;
+	std::shared_ptr<Environment> env = nullptr;
 };

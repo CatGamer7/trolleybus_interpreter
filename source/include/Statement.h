@@ -75,6 +75,16 @@ struct Statement_For : public Statement {
 	stmt_ptr stmt;
 };
 
+struct Statement_Function : public Statement {
+	Statement_Function(Token& in_name, std::vector<Token>& in_arguments, stmt_ptr& in_body);
+
+	void accept(StatementVisitor& stmtVisitor);
+
+	Token name;
+	std::vector<Token> arguments;
+	stmt_ptr body;
+};
+
 struct StatementVisitor {
 	virtual void visit_expression(Statement_Expression& stmt) = 0;
 	virtual void visit_print(Statement_Print& stmt) = 0;
@@ -83,4 +93,5 @@ struct StatementVisitor {
 	virtual void visit_if(Statement_If& stmt) = 0;
 	virtual void visit_while(Statement_While& stmt) = 0;
 	virtual void visit_for(Statement_For& stmt) = 0;
+	virtual void visit_function(Statement_Function& stmt) = 0;
 };
